@@ -3,24 +3,23 @@ import { api } from "../utils/Api.js";
 import Card from "./Card.js";
 
 function Main(props) {
-  const [userName, setUserName] = React.useState();
-  const [userDescription, setUserDescription] = React.useState();
-  const [userAvatar, setUserAvatar] = React.useState();
+  const [userName, setUserName] = React.useState("");
+  const [userDescription, setUserDescription] = React.useState("");
+  const [userAvatar, setUserAvatar] = React.useState("");
   const [cards, setCards] = React.useState([]);
 
   React.useEffect(() => {
     Promise.all([api.getCards(), api.getUserInfo()])
-      .then((result) => {
-        setUserName(result[1].name);
-        setUserDescription(result[1].about);
-        setUserAvatar(result[1].avatar);
-        setCards(result[0].reverse());
+      .then(([cards, userData]) => {
+        setUserName(userData.name);
+        setUserDescription(userData.about);
+        setUserAvatar(userData.avatar);
+        setCards(cards.reverse());
       })
-      .catch((error) => console.log(error));
+      .catch(console.error);
   }, []);
 
   return (
-    <>
       <main>
         <section className="profile">
           <div className="profile__card">
@@ -61,7 +60,6 @@ function Main(props) {
           </ul>
         </section>
       </main>
-    </>
   );
 }
 

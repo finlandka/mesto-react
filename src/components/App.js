@@ -11,7 +11,7 @@ function App() {
   const [isAddPlacePopupOpen, setIsAddPlacePopupOpen] = React.useState(false);
   const [isEditAvatarPopupOpen, setIsEditAvatarPopupOpen] =
     React.useState(false);
-  const [selectedCard, setSelectedCard] = React.useState();
+  const [selectedCard, setSelectedCard] = React.useState({name: '', link: ''});
 
   function handleEditProfileClick() {
     setIsEditProfilePopupOpen(true);
@@ -29,7 +29,7 @@ function App() {
     setIsEditProfilePopupOpen(false);
     setIsAddPlacePopupOpen(false);
     setIsEditAvatarPopupOpen(false);
-    setSelectedCard();
+    setSelectedCard({name: '', link: ''});
   }
 
   function handleCardClick(card) {
@@ -54,8 +54,8 @@ function App() {
         onClose={closeAllPopups}
         name="edit-profile"
         title="Редактировать профиль"
+        buttonText="Сохранить"
       >
-        <>
           <input
             className="popup__input"
             id="formName"
@@ -78,10 +78,6 @@ function App() {
             required
           />
           <span className="formPosition-error popup__error"></span>
-          <button className="popup__button" type="submit">
-            Сохранить
-          </button>
-        </>
       </PopupWithForm>
 
       <PopupWithForm
@@ -89,8 +85,8 @@ function App() {
         onClose={closeAllPopups}
         name="add-card"
         title="Новое место"
+        buttonText="Создать"
       >
-        <>
           <input
             className="popup__input"
             id="placeName"
@@ -111,18 +107,14 @@ function App() {
             required
           />
           <span className="placeUrl-error popup__error"></span>
-          <button className="popup__button" type="submit">
-            Создать
-          </button>
-        </>
       </PopupWithForm>
       <PopupWithForm
         isOpen={isEditAvatarPopupOpen}
         onClose={closeAllPopups}
         name="edit-avatar"
         title="Обновить аватар"
+        buttonText="Сохранить"
       >
-        <>
           <input
             className="popup__input"
             id="avatarUrl"
@@ -132,12 +124,7 @@ function App() {
             required
           />
           <span className="avatarUrl-error popup__error"></span>
-          <button className="popup__button" type="submit">
-            Сохранить
-          </button>
-        </>
       </PopupWithForm>
-      <ImagePopup />
     </div>
   );
 }

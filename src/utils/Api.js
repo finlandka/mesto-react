@@ -1,8 +1,14 @@
 class Api {
-  constructor(apiPath, token) {
-    this._apiPath = apiPath;
-    this._token = token;
+  constructor({ baseUrl, headers }) {
+    this._baseUrl = baseUrl;
+    this._headers = headers;
     this.userId = null;
+  }
+
+  _request(endpoint, options) {
+    return fetch(`${this._baseUrl}/${endpoint}`, options).then((res) =>
+      this._getResponseData(res)
+    );
   }
 
   _getResponseData(res) {
@@ -13,98 +19,78 @@ class Api {
   }
 
   getUserInfo() {
-    return fetch(`${this._apiPath}/users/me`, {
-      headers: {
-        authorization: this._token,
-      },
-    })
-      .then((res) => this._getResponseData(res))
-      .then((data) => {
+    return this._request("users/me", { headers: this._headers }).then(
+      (data) => {
         this.userId = data._id;
         return data;
-      });
+      }
+    );
   }
 
   getCards() {
-    return fetch(`${this._apiPath}/cards`, {
-      headers: {
-        authorization: this._token,
-      },
-    }).then((res) => this._getResponseData(res));
+    return this._request("cards", { headers: this._headers });
   }
 
   editProfile(data) {
-    return fetch(`${this._apiPath}/users/me`, {
+    return this._request("users/me", {
       method: "PATCH",
-      headers: {
-        authorization: this._token,
-        "Content-Type": "application/json",
-      },
+      headers: this._headers,
       body: JSON.stringify({
         name: data.name,
         about: data.position,
       }),
-    }).then((res) => this._getResponseData(res));
+    });
   }
 
   editAvatar(data) {
-    return fetch(`${this._apiPath}/users/me/avatar`, {
+    return this._request("users/me/avatar", {
       method: "PATCH",
-      headers: {
-        authorization: this._token,
-        "Content-Type": "application/json",
-      },
+      headers: this._headers,
       body: JSON.stringify({
         avatar: data.link,
       }),
-    }).then((res) => this._getResponseData(res));
+    });
   }
 
   addCard(data) {
-    return fetch(`${this._apiPath}/cards`, {
+    return this._request("cards", {
       method: "POST",
-      headers: {
-        authorization: this._token,
-        "Content-Type": "application/json",
-      },
+      headers: this._headers,
       body: JSON.stringify({
         name: data.name,
         link: data.link,
       }),
-    }).then((res) => this._getResponseData(res));
+    });
   }
 
   deleteCard(cardId) {
-    return fetch(`${this._apiPath}/cards/${cardId}`, {
+    return this._request(`cards/${cardId}`, {
       method: "DELETE",
-      headers: {
-        authorization: this._token,
-      },
-    }).then((res) => this._getResponseData(res));
+      headers: this._headers,
+    });
   }
 
   addLike(cardId) {
-    return fetch(`${this._apiPath}/cards/${cardId}/likes`, {
+    return this._request(`cards/${cardId}/likes`, {
       method: "PUT",
-      headers: {
-        authorization: this._token,
-      },
-    }).then((res) => this._getResponseData(res));
+      headers: this._headers,
+    });
   }
 
   deleteLike(cardId) {
-    return fetch(`${this._apiPath}/cards/${cardId}/likes`, {
+    return this._request(`cards/${cardId}/likes`, {
       method: "DELETE",
-      headers: {
-        authorization: this._token,
-      },
-    }).then((res) => this._getResponseData(res));
+      headers: this._headers,
+    });
   }
 }
 
-const api = new Api(
-  "https://nomoreparties.co/v1/cohort-66",
-  "18f7db66-c3a4-4e8d-a393-391bdf601f7c"
-);
+const api = new Api({
+  baseUrl: "https://nomoreparties.co/v1/cohort-66",
+  headers: {
+    authorization: "18f7db66-c3a4-4e8d-a393-391bdf601f7c",
+    "Content-Type": "application/json",
+  },
+});
 
-export {api}
+export { api };
