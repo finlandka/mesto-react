@@ -3,7 +3,6 @@ import { api } from "../utils/Api.js";
 import Card from "./Card.js";
 
 function Main(props) {
-  console.log("Компонент Main рендерится");
   const [userName, setUserName] = React.useState();
   const [userDescription, setUserDescription] = React.useState();
   const [userAvatar, setUserAvatar] = React.useState();
