@@ -87,7 +87,7 @@ function App() {
       <PopupWithForm
         isOpen={isAddPlacePopupOpen}
         onClose={closeAllPopups}
-        name="edit-profile"
+        name="add-card"
         title="Новое место"
       >
         <>
@@ -119,7 +119,7 @@ function App() {
       <PopupWithForm
         isOpen={isEditAvatarPopupOpen}
         onClose={closeAllPopups}
-        name="edit-profile"
+        name="edit-avatar"
         title="Обновить аватар"
       >
         <>
