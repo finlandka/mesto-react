@@ -31,23 +31,23 @@ class Api {
     return this._request("cards", { headers: this._headers });
   }
 
-  editProfile(data) {
+  setUserInfo(data) {
     return this._request("users/me", {
       method: "PATCH",
       headers: this._headers,
       body: JSON.stringify({
         name: data.name,
-        about: data.position,
+        about: data.about,
       }),
     });
   }
 
-  editAvatar(data) {
+  setUserAvatar(data) {
     return this._request("users/me/avatar", {
       method: "PATCH",
       headers: this._headers,
       body: JSON.stringify({
-        avatar: data.link,
+        avatar: data.avatar,
       }),
     });
   }
@@ -70,16 +70,9 @@ class Api {
     });
   }
 
-  addLike(cardId) {
+  changeLikeCardStatus(cardId, isLike) {
     return this._request(`cards/${cardId}/likes`, {
-      method: "PUT",
-      headers: this._headers,
-    });
-  }
-
-  deleteLike(cardId) {
-    return this._request(`cards/${cardId}/likes`, {
-      method: "DELETE",
+      method: `${isLike ? "PUT" : "DELETE"}`,
       headers: this._headers,
     });
   }
