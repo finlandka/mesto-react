@@ -1,13 +1,13 @@
 import React from "react";
 import { api } from "../utils/Api.js";
-import { CurrentUserContext } from '../contexts/CurrentUserContext.js';
+import { CurrentUserContext } from "../contexts/CurrentUserContext.js";
 import Header from "./Header.js";
 import Main from "./Main.js";
 import Footer from "./Footer.js";
 import ImagePopup from "./ImagePopup.js";
-import PopupWithForm from "./PopupWithForm.js";
 import EditProfilePopup from "./EditProfilePopup.js";
 import EditAvatarPopup from "./EditAvatarPopup.js";
+import AddPlacePopup from "./AddPlacePopup.js";
 
 function App() {
   const [isEditProfilePopupOpen, setIsEditProfilePopupOpen] =
@@ -15,7 +15,10 @@ function App() {
   const [isAddPlacePopupOpen, setIsAddPlacePopupOpen] = React.useState(false);
   const [isEditAvatarPopupOpen, setIsEditAvatarPopupOpen] =
     React.useState(false);
-  const [selectedCard, setSelectedCard] = React.useState({name: '', link: ''});
+  const [selectedCard, setSelectedCard] = React.useState({
+    name: "",
+    link: "",
+  });
   const [currentUser, setCurrentUser] = React.useState("");
   const [cards, setCards] = React.useState([]);
 
@@ -26,20 +29,28 @@ function App() {
         setCards(cards);
       })
       .catch(console.error);
-  }, [])
+  }, []);
 
   function handleCardLike(card) {
-    const isLiked = card.likes.some(i => i._id === currentUser._id);
-    
-    api.changeLikeCardStatus(card._id, !isLiked).then((newCard) => {
-      setCards((state) => state.map((c) => c._id === card._id ? newCard : c));
-    });
-}
+    const isLiked = card.likes.some((i) => i._id === currentUser._id);
+
+    api
+      .changeLikeCardStatus(card._id, !isLiked)
+      .then((newCard) => {
+        setCards((state) =>
+          state.map((c) => (c._id === card._id ? newCard : c))
+        );
+      })
+      .catch(console.error);
+  }
 
   function handleCardDelete(card) {
-    api.deleteCard(card._id).then(() => {
-      setCards((state) => state.filter((c) => c._id !== card._id && card))
-    })
+    api
+      .deleteCard(card._id)
+      .then(() => {
+        setCards((state) => state.filter((c) => c._id !== card._id && card));
+      })
+      .catch(console.error);
   }
 
   function handleEditProfileClick() {
@@ -58,7 +69,7 @@ function App() {
     setIsEditProfilePopupOpen(false);
     setIsAddPlacePopupOpen(false);
     setIsEditAvatarPopupOpen(false);
-    setSelectedCard({name: '', link: ''});
+    setSelectedCard({ name: "", link: "" });
   }
 
   function handleCardClick(card) {
@@ -66,65 +77,71 @@ function App() {
   }
 
   function handleUpdateUser(data) {
-    api.setUserInfo(data);
-    setCurrentUser({name: data.name, about: data.about, avatar: currentUser.avatar});
+    api
+      .setUserInfo(data)
+      .then((result) => {
+        setCurrentUser({
+          name: result.name,
+          about: result.about,
+          avatar: currentUser.avatar,
+        });
+      })
+      .catch(console.error);
     closeAllPopups();
   }
 
   function handleUpdateAvatar(data) {
-    api.setUserAvatar(data);
-    setCurrentUser({name: currentUser.name, about: currentUser.about, avatar: data.avatar});
+    api
+      .setUserAvatar(data)
+      .then((result) => {
+        setCurrentUser({
+          name: currentUser.name,
+          about: currentUser.about,
+          avatar: result.avatar,
+        });
+      })
+      .catch(console.error);
+    closeAllPopups();
+  }
+
+  function handleAddPlaceSubmit(newCard) {
+    api.addCard(newCard).then((result) => setCards([result, ...cards]));
     closeAllPopups();
   }
 
   return (
     <CurrentUserContext.Provider value={currentUser}>
-    <div className="page">
-      <div className="page__container">
-        <Header />
-        <Main
-          onEditProfile={handleEditProfileClick}
-          onAddPlace={handleAddPlaceClick}
-          onEditAvatar={handleEditAvatarClick}
-          onCardClick={handleCardClick}
-          onCardLike={handleCardLike}
-          onCardDelete={handleCardDelete}
-          cards={cards}
+      <div className="page">
+        <div className="page__container">
+          <Header />
+          <Main
+            onEditProfile={handleEditProfileClick}
+            onAddPlace={handleAddPlaceClick}
+            onEditAvatar={handleEditAvatarClick}
+            onCardClick={handleCardClick}
+            onCardLike={handleCardLike}
+            onCardDelete={handleCardDelete}
+            cards={cards}
+          />
+          <Footer />
+        </div>
+        <ImagePopup card={selectedCard} onClose={closeAllPopups} />
+        <EditProfilePopup
+          isOpen={isEditProfilePopupOpen}
+          onClose={closeAllPopups}
+          onUpdateUser={handleUpdateUser}
         />
-        <Footer />
+        <EditAvatarPopup
+          isOpen={isEditAvatarPopupOpen}
+          onClose={closeAllPopups}
+          onUpdateAvatar={handleUpdateAvatar}
+        />
+        <AddPlacePopup
+          isOpen={isAddPlacePopupOpen}
+          onClose={closeAllPopups}
+          onAddPlace={handleAddPlaceSubmit}
+        />
       </div>
-      <ImagePopup card={selectedCard} onClose={closeAllPopups} />
-      <EditProfilePopup isOpen={isEditProfilePopupOpen} onClose={closeAllPopups} onUpdateUser={handleUpdateUser} />
-      <EditAvatarPopup isOpen={isEditAvatarPopupOpen} onClose={closeAllPopups} onUpdateAvatar={handleUpdateAvatar} />
-      <PopupWithForm
-        isOpen={isAddPlacePopupOpen}
-        onClose={closeAllPopups}
-        name="add-card"
-        title="Новое место"
-        buttonText="Создать"
-      >
-          <input
-            className="popup__input"
-            id="placeName"
-            type="text"
-            placeholder="Название"
-            minLength="2"
-            maxLength="30"
-            name="name"
-            required
-          />
-          <span className="placeName-error popup__error"></span>
-          <input
-            className="popup__input"
-            id="placeUrl"
-            type="url"
-            placeholder="Ссылка на картинку"
-            name="link"
-            required
-          />
-          <span className="placeUrl-error popup__error"></span>
-      </PopupWithForm>
-    </div>
     </CurrentUserContext.Provider>
   );
 }
