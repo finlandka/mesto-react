@@ -1,7 +1,7 @@
 import React from "react";
 import { CurrentUserContext } from "../contexts/CurrentUserContext.js";
 
-function Card(props) {
+ export default React.memo(function Card(props) {
   const currentUser = React.useContext(CurrentUserContext);
   const isOwn = props.card.owner._id === currentUser._id;
   const isLiked = props.card.likes.some((i) => i._id === currentUser._id);
@@ -18,7 +18,7 @@ function Card(props) {
   }
 
   function handleDeleteClick() {
-    props.onCardDelete(props.card);
+    props.onConfirmCardDelete(props.card);
   }
 
   return (
@@ -47,6 +47,4 @@ function Card(props) {
       </div>
     </li>
   );
-}
-
-export default Card;
+});

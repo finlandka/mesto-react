@@ -8,18 +8,25 @@ import ImagePopup from "./ImagePopup.js";
 import EditProfilePopup from "./EditProfilePopup.js";
 import EditAvatarPopup from "./EditAvatarPopup.js";
 import AddPlacePopup from "./AddPlacePopup.js";
+import DeleteCardPopup from "./DeleteCardPopup.js";
 
 function App() {
   const [isEditProfilePopupOpen, setIsEditProfilePopupOpen] =
     React.useState(false);
   const [isAddPlacePopupOpen, setIsAddPlacePopupOpen] = React.useState(false);
+  const [isDeleteCardPopupOpen, setIsDeleteCardPopupOpen] = React.useState(false);
+  const [cardToDelete, setCardToDelete] = React.useState({});
   const [isEditAvatarPopupOpen, setIsEditAvatarPopupOpen] =
     React.useState(false);
   const [selectedCard, setSelectedCard] = React.useState({
     name: "",
     link: "",
   });
-  const [currentUser, setCurrentUser] = React.useState("");
+  const [currentUser, setCurrentUser] = React.useState({
+    name: "",
+    about: "",
+    avatar: "",
+  });
   const [cards, setCards] = React.useState([]);
 
   React.useEffect(() => {
@@ -49,6 +56,7 @@ function App() {
       .deleteCard(card._id)
       .then(() => {
         setCards((state) => state.filter((c) => c._id !== card._id && card));
+        closeAllPopups()
       })
       .catch(console.error);
   }
@@ -65,10 +73,17 @@ function App() {
     setIsEditAvatarPopupOpen(true);
   }
 
+  function handleDeleteCardClick(card) {
+    setIsDeleteCardPopupOpen(true);
+    setCardToDelete(card);
+  }
+
   function closeAllPopups() {
     setIsEditProfilePopupOpen(false);
     setIsAddPlacePopupOpen(false);
     setIsEditAvatarPopupOpen(false);
+    setIsDeleteCardPopupOpen(false);
+    setCardToDelete({});
     setSelectedCard({ name: "", link: "" });
   }
 
@@ -85,9 +100,10 @@ function App() {
           about: result.about,
           avatar: currentUser.avatar,
         });
+        closeAllPopups();
       })
       .catch(console.error);
-    closeAllPopups();
+    
   }
 
   function handleUpdateAvatar(data) {
@@ -99,9 +115,10 @@ function App() {
           about: currentUser.about,
           avatar: result.avatar,
         });
+        closeAllPopups();
       })
       .catch(console.error);
-    closeAllPopups();
+    
   }
 
   function handleAddPlaceSubmit(newCard) {
@@ -120,7 +137,7 @@ function App() {
             onEditAvatar={handleEditAvatarClick}
             onCardClick={handleCardClick}
             onCardLike={handleCardLike}
-            onCardDelete={handleCardDelete}
+            onConfirmCardDelete={handleDeleteCardClick}
             cards={cards}
           />
           <Footer />
@@ -140,6 +157,12 @@ function App() {
           isOpen={isAddPlacePopupOpen}
           onClose={closeAllPopups}
           onAddPlace={handleAddPlaceSubmit}
+        />
+        <DeleteCardPopup 
+        isOpen={isDeleteCardPopupOpen}
+        onClose={closeAllPopups}
+        onCardDelete={handleCardDelete}
+        cardToDelete={cardToDelete}
         />
       </div>
     </CurrentUserContext.Provider>
