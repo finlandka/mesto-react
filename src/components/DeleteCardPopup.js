@@ -1,22 +1,22 @@
 import React from "react";
 import PopupWithForm from "./PopupWithForm";
 
-function DeleteCardPopup(props) {
+function DeleteCardPopup({ isOpen, onClose, onCardDelete, cardToDelete }) {
   function handleSubmit(e) {
     e.preventDefault();
 
-    props.onCardDelete(props.cardToDelete)
+    onCardDelete(cardToDelete);
   }
 
   return (
     <PopupWithForm
-      isOpen={props.isOpen}
-      onClose={props.onClose}
+      isOpen={isOpen}
+      onClose={onClose}
       name="delete-card"
       title="Вы уверены?"
       buttonText="Да"
       onSubmit={handleSubmit}
-    ></PopupWithForm>
+    />
   );
 }
 

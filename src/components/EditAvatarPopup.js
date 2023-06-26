@@ -2,7 +2,7 @@ import React from "react";
 import PopupWithForm from "./PopupWithForm";
 import { CurrentUserContext } from "../contexts/CurrentUserContext.js";
 
-function EditAvatarPopup(props) {
+function EditAvatarPopup({ isOpen, onClose, onUpdateAvatar }) {
   const currentUser = React.useContext(CurrentUserContext);
 
   const avatar = React.createRef();
@@ -14,15 +14,15 @@ function EditAvatarPopup(props) {
   function handleSubmit(e) {
     e.preventDefault();
 
-    props.onUpdateAvatar({
+    onUpdateAvatar({
       avatar: avatar.current.value,
     });
   }
 
   return (
     <PopupWithForm
-      isOpen={props.isOpen}
-      onClose={props.onClose}
+      isOpen={isOpen}
+      onClose={onClose}
       name="edit-avatar"
       title="Обновить аватар"
       buttonText="Сохранить"

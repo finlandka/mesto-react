@@ -2,8 +2,28 @@ import React from "react";
 import { CurrentUserContext } from "../contexts/CurrentUserContext.js";
 import Card from "./Card.js";
 
-function Main(props) {
+function Main({
+  onEditProfile,
+  onAddPlace,
+  onEditAvatar,
+  onCardClick,
+  onCardLike,
+  onConfirmCardDelete,
+  cards,
+}) {
   const currentUser = React.useContext(CurrentUserContext);
+  const cardsElements = cards.map((card) => {
+    return (
+      <li key={card._id} className="gallery__item">
+        <Card
+          card={card}
+          onCardClick={onCardClick}
+          onCardLike={onCardLike}
+          onConfirmCardDelete={onConfirmCardDelete}
+        />
+      </li>
+    );
+  });
 
   return (
     <main>
@@ -11,7 +31,7 @@ function Main(props) {
         <div className="profile__card">
           <div
             className="profile__avatar"
-            onClick={props.onEditAvatar}
+            onClick={onEditAvatar}
             style={{ backgroundImage: `url(${currentUser.avatar})` }}
           ></div>
           <div className="profile__info">
@@ -19,7 +39,7 @@ function Main(props) {
               <h1 className="profile__fullname">{currentUser.name}</h1>
               <button
                 className="button button_action_edit"
-                onClick={props.onEditProfile}
+                onClick={onEditProfile}
                 aria-label="Редактировать"
               ></button>
             </div>
@@ -29,23 +49,11 @@ function Main(props) {
         <button
           className="button button_action_add"
           aria-label="Добавить"
-          onClick={props.onAddPlace}
+          onClick={onAddPlace}
         ></button>
       </section>
       <section className="gallery-section">
-        <ul className="gallery">
-          {props.cards.map((card) => {
-            return (
-              <Card
-                key={card._id}
-                card={card}
-                onCardClick={props.onCardClick}
-                onCardLike={props.onCardLike}
-                onConfirmCardDelete={props.onConfirmCardDelete}
-              />
-            );
-          })}
-        </ul>
+        <ul className="gallery">{cardsElements}</ul>
       </section>
     </main>
   );
